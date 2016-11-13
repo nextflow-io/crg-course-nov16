@@ -22,7 +22,7 @@ Then copy the script `nextflow` in a directory on your `PATH`.
 Finally, clone this repository with the following command: 
 
 ```
-git clone https://github.com/nextflow-io/rna-demo.git && cd rna-demo
+git clone https://github.com/nextflow-io/crg-course-nov16.git && cd crg-course-nov16
 ```
 
 ## Docker hands-on 
@@ -68,7 +68,7 @@ When done save the file.
 Build the Docker image with the following command: 
 
 ```
-docker build -t $USER/my-image .
+docker build -t my-image .
 ```
 
 When it completes, verify that the image has been created listing all available images: 
@@ -79,7 +79,7 @@ docker images
 
 #### Step 5 
 
-Add the Bowtie package to the Docker image adding to the Dockerfile the following snippet: 
+Add the Bowtie package to the Docker image adding to the `Dockerfile` the following snippet: 
 
 ```
 RUN wget -q -O bowtie.zip https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.7/bowtie2-2.2.7-linux-x86_64.zip/download && \
@@ -93,7 +93,7 @@ ENV PATH $PATH:/opt/bowtie2-2.2.7/
 Save the file and build again the image with the same command as before: 
 
 ```
-docker build -t $USER/my-image .
+docker build -t my-image .
 ```
 
 You will notice that create a new Docker image with the same *but* with a different image ID. 
@@ -103,13 +103,13 @@ You will notice that create a new Docker image with the same *but* with a differ
 Check that everything is fine running the bowtie help in the container: 
 
 ```
-docker run $USER/my-image bowtie2 --help
+docker run my-image bowtie2 --version
 ```
 
 You can even launch a container in an interactive mode by using the following command: 
 
 ```
-docker run -it $USER/my-image bash
+docker run -it my-image bash
 ```
 
 Once launched the container you wil noticed that's running as `root`. Use the usual command 
@@ -130,13 +130,13 @@ in the container.
 Change in the project root directory with the following command: 
 
 ```
-cd ~/rna-demo
+cd ~/crg-course-nov16
 ```
 
 The run bowtie in the container with the following command: 
 
 ```
-docker run --volume $PWD:$PWD --workdir $PWD pditommaso/my-image bowtie2-build data/ggal_1_48850000_49020000.Ggal71.500bpflank.fa genome.index
+docker run --volume $PWD:$PWD --workdir $PWD my-image bowtie2-build data/ggal/genome.fa genome.index
 ```
 
 #### Step 8 [bonus]
@@ -153,7 +153,7 @@ docker login
 Tag the image with your Docker username account 
 
 ```
-docker tag $USER/my-image <user-name>/my-image 
+docker tag my-image <user-name>/my-image 
 ```
 
 Finally push to the Docker Hub 
