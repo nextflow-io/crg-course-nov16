@@ -25,6 +25,173 @@ Finally, clone this repository with the following command:
 git clone https://github.com/nextflow-io/crg-course-nov16.git && cd crg-course-nov16
 ```
 
+## Nextflow hands-on 
+
+During this tutorial you will implement a proof of concept of a RNA-Seq pipeline which: 
+
+1. index a genome file
+2. map read pairs against the genome
+3. perform quantification
+
+#### Step 1 
+
+The script `rna-ex1.nf` defines the pipeline input parameters. Run it by using the 
+following command: 
+
+```
+nextflow run rna-ex1.nf
+```
+
+Try to specify a different input parameter, for example: 
+
+```
+nextflow run rna-ex1.nf --genome this/and/that
+```
+
+#### Step 2 
+
+The second example add the `buildIndex` process. It takes the genome file as 
+input and create the genome index by using the `bowtie-build` tool. 
+
+Try to run it by using the command: 
+
+```
+nextflow run rna-ex2.nf
+```
+
+The execution will fail because Bowtie is not installed in the test environment. 
+
+Add the command line option `-with-docker` to launch the execution through a Docker container
+as shown below: 
+
+```
+nextflow run rna-ex2.nf
+```
+
+This it works because it uses the Docker container `nextflow/rnatoy:1.3` defined in the 
+`nextflow.config` file. 
+
+In order to avoid to add the option `-with-docker` add the following line in the `nextflow.config` file: 
+
+```
+docker.enabled = true
+```
+
+#### Step 3 
+
+This step shows how to match *read* files into pairs, so that can be mapped by using *TopHat*. 
+
+Edit the script `rna-ex3.nf` and add the following statement as the last line: 
+
+```
+read_pairs.println()
+```
+
+Save it and execute it with the following command: 
+
+```
+nextflow run rna-ex3.nf
+```
+
+Try it again specifying different read files by using a glob pattern:
+
+```
+nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq'
+```
+
+#### Step 4 
+
+The script `rna-ex4.nf` add the `mapping` process. Note how it declares three inputs: 
+the genome fasta file, the genome index file produced by the `buildIndex` process and 
+the read pairs. Also note as the last input is defined as a `set` ie. composed by 
+different elements: the pair ID, the first read file and the second read file. 
+
+Execute it by using the following command: 
+
+```
+nextflow run rna-ex4.nf -resume
+```
+
+The `-resume` option skip the execution of any step that has been processed in a previous 
+execution. 
+
+Try to execute it with more read files as shown below: 
+
+```
+nextflow run rna-ex4.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
+```
+
+
+#### Step 5 
+
+This step adds the quantification step to the example script. It takes the 
+annotation file and the *bam* files produces by *TopHat* and outputs the transcripts 
+*gtf* files. 
+
+You can run it by using the following command: 
+
+```
+nextflow run rna-ex5.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' 
+```
+
+#### Step 6 
+
+This step shows how produce the pipeline output to a folder of your choice by using the 
+`publishDir` directive. 
+
+Run the example by using the following command: 
+
+```
+nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' 
+```
+
+Then you will find the quantification files in the folder `results`. 
+
+Modify the `rna-ex6.nf` script by adding the following line at the beginning of the file: 
+
+```
+params.outdir = 'results'
+```
+
+Then, look for the `publishDir` directive in the `makeTranscript` process, and 
+replace the `'results'` string with the `params.outdir` parameter. 
+
+Finally run it again with the following command: 
+
+```
+nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my_transcripts
+```
+
+
+
+#### Step 7
+
+#### Step 8 [bonus] 
+
+Here you will lean how to publish your pipeline on GitHub. 
+
+Create a new empty project folder eg. `$HOME/rnaseq-demo`. 
+
+Copy in that folder the following files: 
+
+```
+cp $HOME/crg-course-nov16/rna-ex6.nf $HOME/rnaseq-demo/main.nf
+cp $HOME/crg-course-nov16/nextflow.config $HOME/rnaseq-demo/
+cp -r $HOME/crg-course-nov16/data $HOME/rnaseq-demo/
+```
+
+Create a new project on GitHub to host your pipeline, and follow 
+the instraction provided by it to publish the `$HOME/rnaseq-demo/`
+in that repository. 
+
+When done, you will be able to run your pipeline by using the following 
+command: 
+
+```
+nextflow run <github-user>/rnaseq-demo
+```
+
+
 ## Docker hands-on 
 
 Create a Docker image containing Samtools and Bowtie2. 
