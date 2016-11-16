@@ -49,7 +49,7 @@ read_pairs = Channel.fromFilePairs(params.reads, flat: true)
  * Step 2. Maps each read-pair by using Tophat2 mapper tool
  */
 process mapping {
- 	tag "$pair_id"
+    tag "$pair_id"
      
     input:
     file 'genome.index.fa' from genome_file 
@@ -68,7 +68,7 @@ process mapping {
  * Step 3. Assembles the transcript by using the "cufflinks" tool
  */
 process makeTranscript {
- 	tag "$pair_id"
+    tag "$pair_id"
     publishDir "results", mode: 'copy'  
        
     input:
