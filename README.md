@@ -33,7 +33,7 @@ During this tutorial you will implement a proof of concept of a RNA-Seq pipeline
 2. map read pairs against the genome
 3. perform quantification
 
-#### Step 1 
+### Step 1 
 
 The script `rna-ex1.nf` defines the pipeline input parameters. Run it by using the 
 following command: 
@@ -48,7 +48,7 @@ Try to specify a different input parameter, for example:
 nextflow run rna-ex1.nf --genome this/and/that
 ```
 
-#### Step 2 
+### Step 2 
 
 The second example add the `buildIndex` process. It takes the genome file as 
 input and create the genome index by using the `bowtie-build` tool. 
@@ -77,7 +77,7 @@ In order to avoid to add the option `-with-docker` add the following line in the
 docker.enabled = true
 ```
 
-#### Step 3 
+### Step 3 
 
 This step shows how to match *read* files into pairs, so that can be mapped by using *TopHat*. 
 
@@ -99,7 +99,7 @@ Try it again specifying different read files by using a glob pattern:
 nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq'
 ```
 
-#### Step 4 
+### Step 4 
 
 The script `rna-ex4.nf` add the `mapping` process. Note how it declares three inputs: 
 the genome fasta file, the genome index file produced by the `buildIndex` process and 
@@ -122,7 +122,7 @@ nextflow run rna-ex4.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ```
 
 
-#### Step 5 
+### Step 5 
 
 This step adds the quantification step to the example script. It takes the 
 annotation file and the *bam* files produces by *TopHat* and outputs the transcripts 
@@ -134,7 +134,7 @@ You can run it by using the following command:
 nextflow run rna-ex5.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' 
 ```
 
-#### Step 6 
+### Step 6 
 
 This step shows how produce the pipeline output to a folder of your choice by using the 
 `publishDir` directive. 
@@ -164,9 +164,9 @@ nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my
 
 
 
-#### Step 7
+### Step 7
 
-#### Step 8 [bonus] 
+### Step 8 [bonus] 
 
 Here you will lean how to publish your pipeline on GitHub. 
 
@@ -199,7 +199,7 @@ Create a Docker image containing Samtools and Bowtie2.
 Then use it to create a genome index file. 
 
 
-#### Step 1 
+### Step 1 
 
 Create an empty working directory eg. `~/docker-demo` and change to it: 
 
@@ -213,7 +213,7 @@ to the Docker daemon in order to create an image. Thus it's imporant *always* to
 containing only the files you want to copy in your Docker image. Alternatively you can use 
 the `.dockerignore` file to select the path to exclude from the build. 
 
-#### Step 2 
+### Step 2 
 
 Use your favourite editor eg. `vim` to create a file named `Dockerfile` and copy the following 
 content: 
@@ -230,7 +230,7 @@ RUN apt-get update --fix-missing && \
 
 When done save the file. 
 
-#### Step 4 
+### Step 4 
 
 Build the Docker image with the following command: 
 
@@ -244,7 +244,7 @@ When it completes, verify that the image has been created listing all available 
 docker images
 ```
 
-#### Step 5 
+### Step 5 
 
 Add the Bowtie package to the Docker image adding to the `Dockerfile` the following snippet: 
 
@@ -265,7 +265,7 @@ docker build -t my-image .
 
 You will notice that create a new Docker image with the same *but* with a different image ID. 
 
-#### Step 6 
+### Step 6 
 
 Check that everything is fine running the bowtie help in the container: 
 
@@ -284,7 +284,7 @@ to navigate in the file system.
 
 To exit from the container, stop the BASH session with the `exit` command.
 
-#### Step 7
+### Step 7
 
 Create an genome index file by running bowtie in the container. 
 
@@ -306,7 +306,7 @@ The run bowtie in the container with the following command:
 docker run --volume $PWD:$PWD --workdir $PWD my-image bowtie2-build data/ggal/genome.fa genome.index
 ```
 
-#### Step 8 [bonus]
+### Step 8 [bonus]
 
 Publish your container in the Docker Hub to share it with other people. 
 
