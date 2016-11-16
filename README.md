@@ -336,6 +336,14 @@ docker pull <user-name>/my-image
 ```
 
 
+## Deploy a NF pipeline in the CRG cluster 
+
+
+## Deploy a NF pipeline in the AWS cloud 
+
+
+[![asciicast](https://asciinema.org/a/9vupd4d72ivaz6h56pajjjkop.png)](https://asciinema.org/a/9vupd4d72ivaz6h56pajjjkop)
+
 
 
 
