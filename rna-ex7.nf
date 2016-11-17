@@ -5,6 +5,7 @@
 params.reads = "$baseDir/data/ggal/reads/*_gut_{1,2}.fq"
 params.annot = "$baseDir/data/ggal/annotation.gff"
 params.genome = "$baseDir/data/ggal/genome.fa"
+params.outdir = 'results'
 
 /* 
  * prints user convenience 
@@ -69,7 +70,7 @@ process mapping {
  */
 process makeTranscript {
     tag "$pair_id"
-    publishDir "results", mode: 'copy'  
+    publishDir params.outdir, mode: 'copy'  
        
     input:
     file annot from annotation_file 

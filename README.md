@@ -1,6 +1,6 @@
 # Nextflow demo scripts
 
-A set of scripts for Nextflow demo purpose. 
+A set of scripts for Nextflow tutorial purpose. 
 
 
 ## Prerequisite
@@ -162,11 +162,14 @@ Finally run it again with the following command:
 nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my_transcripts
 ```
 
+You will find the transcripts produces by the pipeline in the `my_transcripts` folder.
 
 
 ### Step 7
 
-### Step 8 [bonus] 
+This step shows 
+
+### Step 8 (bonus)  
 
 Here you will lean how to publish your pipeline on GitHub. 
 
@@ -188,7 +191,7 @@ When done, you will be able to run your pipeline by using the following
 command: 
 
 ```
-nextflow run <github-user>/rnaseq-demo
+nextflow run <your-github-user-name>/rnaseq-demo
 ```
 
 
@@ -201,16 +204,17 @@ Then use it to create a genome index file.
 
 ### Step 1 
 
-Create an empty working directory eg. `~/docker-demo` and change to it: 
+Create an empty working directory eg. `~/docker-tutorial` and change to it: 
 
 ```
-mkdir ~/docker-demo 
-cd ~/docker-demo 
+mkdir ~/docker-tutorial 
+cd ~/docker-tutorial 
 ```
 
-Warning: the Docker build process automatically copies all file in launching working directory 
-to the Docker daemon in order to create an image. Thus it's imporant *always* to work in a directory 
-containing only the files you want to copy in your Docker image. Alternatively you can use 
+Warning: the Docker build process automatically copies all files that are located in the 
+launching working directory to the Docker daemon in order to create an image. This can take 
+a lot of time for big/many files. For this reason it's imporant *always* to work in a directory 
+containing only the files you really need to include in your Docker image. Alternatively you can use 
 the `.dockerignore` file to select the path to exclude from the build. 
 
 ### Step 2 
@@ -219,7 +223,6 @@ Use your favourite editor eg. `vim` to create a file named `Dockerfile` and copy
 content: 
 
 ```
-
 FROM debian:jessie 
 
 MAINTAINER <your name>
@@ -246,7 +249,7 @@ docker images
 
 ### Step 5 
 
-Add the Bowtie package to the Docker image adding to the `Dockerfile` the following snippet: 
+Add the Bowtie package to the Docker image by adding to the `Dockerfile` the following snippet: 
 
 ```
 RUN wget -q -O bowtie.zip https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.7/bowtie2-2.2.7-linux-x86_64.zip/download && \
@@ -288,25 +291,31 @@ To exit from the container, stop the BASH session with the `exit` command.
 
 Create an genome index file by running bowtie in the container. 
 
-It's important to understand that the container runs a complete separate file system and 
+The run Bowtie in the container with the following command: 
+
+```
+docker run my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
+```
+
+The above command it fails because Bowtie cannot access the input file.
+
+This is happening because the container runs in a complete separate file system and 
 it hasn't access to the hosting file system by default. 
 
-You will need to use the `--volume` command line option to mount the host file system 
-in the container. 
-
-Change in the project root directory with the following command: 
+You will need to use the `--volume` command line option to mount the input file(s) eg. 
 
 ```
-cd ~/crg-course-nov16
+docker run --volume ~/crg-course-nov16/data/ggal/genome.fa:/genome.fa my-image bowtie2-build /genome.fa genome.index
 ```
 
-The run bowtie in the container with the following command: 
+An easier way is to mount the parent directory to an equivalent one in the container, 
+this allows you to use the same path when running in the container eg. 
 
 ```
-docker run --volume $PWD:$PWD --workdir $PWD my-image bowtie2-build data/ggal/genome.fa genome.index
+docker run --volume $HOME:$HOME --workdir $PWD my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
 ```
 
-### Step 8 [bonus]
+### Step 8 (bonus)
 
 Publish your container in the Docker Hub to share it with other people. 
 
@@ -317,13 +326,13 @@ the following command, entering the user name and password you specified registe
 docker login 
 ``` 
 
-Tag the image with your Docker username account 
+Tag the image with your Docker username account: 
 
 ```
 docker tag my-image <user-name>/my-image 
 ```
 
-Finally push to the Docker Hub 
+Finally push it to the Docker Hub:
 
 ```
 docker push <user-name>/my-image 
@@ -338,14 +347,79 @@ docker pull <user-name>/my-image
 
 ## Deploy a NF pipeline in the CRG cluster 
 
+Nextflow supports different execution platforms. This means that your script 
+can be executed in a single computer or a cluster of by simply providing a configuration
+file that specify what resource scheduler you want to use. 
 
-## Deploy a NF pipeline in the AWS cloud 
+For the sake of this tutorial you will run the [RNA-Toy](https://github.com/nextflow-io/rnatoy) 
+pipeline in the CRG cluster. 
+
+Log-in the CRG cluster by using the following cluster: 
+
+```
+ssh <sit-xx>@ant-login.linux.crg.es
+```
+
+* Replace the `<sit-xx>` string with the user name that you have been assigned. 
+
+Create a project directory eg. `rnatoy` and create a file named `nextflow.config` with
+the following content: 
+
+```
+process.executor = 'crg' 
+process.queue = 'course'
+process.scratch = true
+process.time = '1h'
+process.memory = '1G'
+docker.enabled = true
+```
+
+Then launch the execution of the pipeline with the following command: 
+
+```
+nextflow run rnatoy
+```
+
+When completed you will find the pipeline output in the `results` folder.
+
+### Error fail over 
+
+
+
+### Automatic resource management 
+
+ 
+
+## Deploy a NF pipeline in the AWS cloud (bonus)
+
+Nextflow allows any pipeline to the executed in the AWS cloud. 
 
 
 [![asciicast](https://asciinema.org/a/9vupd4d72ivaz6h56pajjjkop.png)](https://asciinema.org/a/9vupd4d72ivaz6h56pajjjkop)
 
 
+## Assignment 
 
+Create a two steps pipeline that given any number of protein sequence FASTA files creates 
+a phylogenetic tree for each or them. Bonus: use a Docker to isolate and deploy 
+the binary dependencies.  
 
+##### Tip 
 
- 
+Use [Clustalw2](http://www.clustal.org/clustal2/) to align the protein sequences. Example 
+command line: 
+
+    clustalw2 -infile=sample.fa -output=phylip -outfile=aln.phy
+    
+Use [RAxML](https://github.com/stamatak/standard-RAxML) to create the phylogenetic tree. 
+Example command line: 
+
+    raxmlHPC -f d -j -p 9 -T 2 -m PROTGAMMALG -s aln.phy -n aln       
+
+Use the input protein sequence FASTA files in the following folder: 
+
+    $HOME/crg-course-nov16/
+    
+    
+[The code will be published after the of the course]    
+
