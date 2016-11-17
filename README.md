@@ -1,7 +1,7 @@
-# Nextflow demo scripts
+# Nextflow + Docker tutorial 
 
-A set of scripts for Nextflow tutorial purpose. 
-
+This repository contains the tutorial material for the *Parallel distributed computational workflows
+with Nextflow and Docker containers* course. 
 
 ## Prerequisite
 
@@ -16,8 +16,12 @@ Install Nextflow by using the following command:
 curl -fsSL get.nextflow.io | bash
 ```
     
-Then copy the script `nextflow` in a directory on your `PATH`. 
+The above snippet creates the `nextflow` launcher in the current directory. 
+Complete the installation moving it in a directory on your `PATH` eg: 
 
+```
+mv nextflow $HOME/bin
+``` 
    
 Finally, clone this repository with the following command: 
 
@@ -29,9 +33,9 @@ git clone https://github.com/nextflow-io/crg-course-nov16.git && cd crg-course-n
 
 During this tutorial you will implement a proof of concept of a RNA-Seq pipeline which: 
 
-1. index a genome file
-2. map read pairs against the genome
-3. perform quantification
+1. Index a genome file.
+2. Map read pairs against the genome.
+3. Perform quantification.
 
 ### Step 1 
 
@@ -50,8 +54,8 @@ nextflow run rna-ex1.nf --genome this/and/that
 
 ### Step 2 
 
-The second example add the `buildIndex` process. It takes the genome file as 
-input and create the genome index by using the `bowtie-build` tool. 
+The second example adds the `buildIndex` process. It takes the genome file as 
+input and creates the genome index by using the `bowtie-build` tool. 
 
 Try to run it by using the command: 
 
@@ -65,10 +69,10 @@ Add the command line option `-with-docker` to launch the execution through a Doc
 as shown below: 
 
 ```
-nextflow run rna-ex2.nf
+nextflow run rna-ex2.nf -with-docker
 ```
 
-This it works because it uses the Docker container `nextflow/rnatoy:1.3` defined in the 
+This time it works because it uses the Docker container `nextflow/rnatoy:1.3` defined in the 
 `nextflow.config` file. 
 
 In order to avoid to add the option `-with-docker` add the following line in the `nextflow.config` file: 
@@ -101,7 +105,7 @@ nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq'
 
 ### Step 4 
 
-The script `rna-ex4.nf` add the `mapping` process. Note how it declares three inputs: 
+The script `rna-ex4.nf` adds the `mapping` process. Note how it declares three inputs: 
 the genome fasta file, the genome index file produced by the `buildIndex` process and 
 the read pairs. Also note as the last input is defined as a `set` ie. composed by 
 different elements: the pair ID, the first read file and the second read file. 
@@ -112,7 +116,7 @@ Execute it by using the following command:
 nextflow run rna-ex4.nf -resume
 ```
 
-The `-resume` option skip the execution of any step that has been processed in a previous 
+The `-resume` option skips the execution of any step that has been processed in a previous 
 execution. 
 
 Try to execute it with more read files as shown below: 
@@ -125,7 +129,7 @@ nextflow run rna-ex4.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ### Step 5 
 
 This step adds the quantification step to the example script. It takes the 
-annotation file and the *bam* files produces by *TopHat* and outputs the transcripts 
+annotation file and the *bam* files produced by *TopHat* and outputs the transcripts 
 *gtf* files. 
 
 You can run it by using the following command: 
@@ -162,17 +166,33 @@ Finally run it again with the following command:
 nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my_transcripts
 ```
 
-You will find the transcripts produces by the pipeline in the `my_transcripts` folder.
+You will find the transcripts produced by the pipeline in the `my_transcripts` folder.
 
 
 ### Step 7
 
-This step shows 
+This step shows how to execute an action when the pipeline completes the execution. 
+
+Note that Nextflow processes define the execution of *asynchronous* tasks i.e. they are not 
+executed one after another as they are written in the pipeline as it would happen in a 
+common *iperative* programming language.
+
+The script uses the `workflow.onComplete` event handler to print a confirmation message 
+when the script completes. 
+
+Try to run it by using the following command: 
+
+```
+nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
+``` 
+ 
 
 ### Step 8 (bonus)  
 
-Here you will lean how to publish your pipeline on GitHub. 
-
+Here you will lean how to publish your pipeline on [GitHub](https://github.com) and share 
+it with other people in a easy and consistent manner ie. tracking all the project 
+dependencies. 
+ 
 Create a new empty project folder eg. `$HOME/rnaseq-demo`. 
 
 Copy in that folder the following files: 
@@ -212,15 +232,15 @@ cd ~/docker-tutorial
 ```
 
 Warning: the Docker build process automatically copies all files that are located in the 
-launching working directory to the Docker daemon in order to create an image. This can take 
-a lot of time for big/many files. For this reason it's imporant *always* to work in a directory 
-containing only the files you really need to include in your Docker image. Alternatively you can use 
-the `.dockerignore` file to select the path to exclude from the build. 
+current directory to the Docker daemon in order to create the image. This can take 
+a lot of time when big/many files exist. For this reason it's important to *always* work in 
+a directory containing only the files you really need to include in your Docker image. 
+Alternatively you can use the `.dockerignore` file to select the path to exclude from the build. 
 
 ### Step 2 
 
-Use your favourite editor eg. `vim` to create a file named `Dockerfile` and copy the following 
-content: 
+Use your favourite editor eg. `vim` to create a file named `Dockerfile` and copy the 
+following content: 
 
 ```
 FROM debian:jessie 
@@ -235,7 +255,7 @@ When done save the file.
 
 ### Step 4 
 
-Build the Docker image with the following command: 
+Build the Docker image by using the following command: 
 
 ```
 docker build -t my-image .
@@ -266,11 +286,12 @@ Save the file and build again the image with the same command as before:
 docker build -t my-image .
 ```
 
-You will notice that create a new Docker image with the same *but* with a different image ID. 
+You will notice that it creates a new Docker image with the same name *but* with a 
+different image ID. 
 
 ### Step 6 
 
-Check that everything is fine running the bowtie help in the container: 
+Check that everything is fine running Bowtie in the container as shown below: 
 
 ```
 docker run my-image bowtie2 --version
@@ -282,8 +303,8 @@ You can even launch a container in an interactive mode by using the following co
 docker run -it my-image bash
 ```
 
-Once launched the container you wil noticed that's running as `root`. Use the usual command 
-to navigate in the file system. 
+Once launched the container you wil noticed that's running as `root` (!). Use the usual 
+commands to navigate in the file system. 
 
 To exit from the container, stop the BASH session with the `exit` command.
 
@@ -291,16 +312,16 @@ To exit from the container, stop the BASH session with the `exit` command.
 
 Create an genome index file by running bowtie in the container. 
 
-The run Bowtie in the container with the following command: 
+Try to run Bowtie in the container with the following command: 
 
 ```
 docker run my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
 ```
 
-The above command it fails because Bowtie cannot access the input file.
+The above command fails because Bowtie cannot access the input file.
 
-This is happening because the container runs in a complete separate file system and 
-it hasn't access to the hosting file system by default. 
+This happens because the container runs in a complete separate file system and 
+it cannot access the hosting file system by default. 
 
 You will need to use the `--volume` command line option to mount the input file(s) eg. 
 
@@ -308,8 +329,8 @@ You will need to use the `--volume` command line option to mount the input file(
 docker run --volume ~/crg-course-nov16/data/ggal/genome.fa:/genome.fa my-image bowtie2-build /genome.fa genome.index
 ```
 
-An easier way is to mount the parent directory to an equivalent one in the container, 
-this allows you to use the same path when running in the container eg. 
+An easier way is to mount the parent directory to an identical one in the container, 
+this allows you to use the same path when running it in the container eg. 
 
 ```
 docker run --volume $HOME:$HOME --workdir $PWD my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
@@ -338,7 +359,7 @@ Finally push it to the Docker Hub:
 docker push <user-name>/my-image 
 ```
 
-After that anyone will be able to download with the command: 
+After that anyone will be able to download it by using the command: 
 
 ```
 docker pull <user-name>/my-image 
@@ -348,8 +369,8 @@ docker pull <user-name>/my-image
 ## Deploy a NF pipeline in the CRG cluster 
 
 Nextflow supports different execution platforms. This means that your script 
-can be executed in a single computer or a cluster of by simply providing a configuration
-file that specify what resource scheduler you want to use. 
+can be executed in a single computer, a cluster or a cloud by simply providing a configuration
+file that specify what computational platform you want to use. 
 
 For the sake of this tutorial you will run the [RNA-Toy](https://github.com/nextflow-io/rnatoy) 
 pipeline in the CRG cluster. 
@@ -357,10 +378,10 @@ pipeline in the CRG cluster.
 Log-in the CRG cluster by using the following cluster: 
 
 ```
-ssh <sit-xx>@ant-login.linux.crg.es
+ssh <sitXX>@ant-login.linux.crg.es
 ```
 
-* Replace the `<sit-xx>` string with the user name that you have been assigned. 
+* Replace the `<sitXX>` string with the user name that you have been assigned. 
 
 Create a project directory eg. `rnatoy` and create a file named `nextflow.config` with
 the following content: 
@@ -374,7 +395,7 @@ process.memory = '1G'
 docker.enabled = true
 ```
 
-Then launch the execution of the pipeline with the following command: 
+Then launch the execution of the pipeline by using the following command: 
 
 ```
 nextflow run rnatoy
@@ -382,18 +403,49 @@ nextflow run rnatoy
 
 When completed you will find the pipeline output in the `results` folder.
 
-### Error fail over 
+### Automatic errors fail over 
+
+When running large scale pipelines launching thousands of jobs on many 
+different computing nodes errors are not a remote event. 
+
+Nextflow allows failing tasks to be automatically re-executed, in this way it's possible 
+to address temporary failures such as failing hardware or network hiccups. In order to enable 
+automatic jobs re-execution add the following setting in the `nextflow.config` file: 
+
+```
+process.errorStrategy = 'retry'
+```
+
+A more common source of errors in computational pipeline are peaks in computing resources, 
+allocated by a jobs exceeding the original resource request. In this context automatically 
+re-executing the failed task is useless because it would simply replicate the same error condition. 
+
+A common solution consists of increasing the resource request for the needs of the most consuming job, 
+even though this will result in a suboptimal allocation of most of the jobs that are less resource hungry.
+
+Nextlow allows resources to be defined in a dynamic manner. In this way it is possible to 
+increase the memory request when rescheduling a failing task execution. For example: 
+
+```
+process.memory = { 1.GB * task.attempt }
+process.errorStrategy { task.exitStatus == 140 ? 'retry' : 'terminate' }
+```
+
+By using the above settings pipeline a task will initially request one GB of memory. 
+In case of an error it will be rescheduled requesting 2 GB and so on, until it is executed 
+successfully or the limit of times a task can be retried is reached, forcing the termination 
+of the pipeline.
 
 
-
-### Automatic resource management 
-
- 
 
 ## Deploy a NF pipeline in the AWS cloud (bonus)
 
-Nextflow allows any pipeline to the executed in the AWS cloud. 
+Nextflow pipelines can be seamlessly executed in the Amazon cloud. All you need is an AWS 
+user account a base Amazon VM image (AMI) that will be used to setup the computing cluster 
+in the cloud. 
 
+The following screen cast shows how to configure, setup the cluster and launch the pipeline 
+execution in the AWS cloud in a few commands:  
 
 [![asciicast](https://asciinema.org/a/9vupd4d72ivaz6h56pajjjkop.png)](https://asciinema.org/a/9vupd4d72ivaz6h56pajjjkop)
 
@@ -404,7 +456,7 @@ Create a two steps pipeline that given any number of protein sequence FASTA file
 a phylogenetic tree for each or them. Bonus: use a Docker to isolate and deploy 
 the binary dependencies.  
 
-##### Tip 
+#### Tip 
 
 Use [Clustalw2](http://www.clustal.org/clustal2/) to align the protein sequences. Example 
 command line: 
