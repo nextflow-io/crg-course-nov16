@@ -193,7 +193,12 @@ Here you will lean how to publish your pipeline on [GitHub](https://github.com) 
 it with other people in a easy and consistent manner ie. tracking all the project 
 dependencies. 
  
-Create a new empty project folder eg. `$HOME/rnaseq-demo`. 
+Create a new empty project folder eg. 
+
+```
+mkdir $HOME/rnaseq-demo
+cd $HOME/rnaseq-demo
+``` 
 
 Copy in that folder the following files: 
 
@@ -219,7 +224,7 @@ nextflow run <your-github-user-name>/rnaseq-demo
 
 Create a Docker image containing Samtools and Bowtie2. 
 
-Then use it to create a genome index file. 
+Then use it to build a genome index file. 
 
 
 ### Step 1 
@@ -261,7 +266,8 @@ Build the Docker image by using the following command:
 docker build -t my-image .
 ```
 
-When it completes, verify that the image has been created listing all available images: 
+Note, don't miss the dot in the above command. When it completes, verify that the image 
+has been created listing all available images: 
 
 ```
 docker images
