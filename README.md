@@ -37,7 +37,7 @@ During this tutorial you will implement a proof of concept of a RNA-Seq pipeline
 2. Map read pairs against the genome.
 3. Perform quantification.
 
-### Step 1 
+### Step 1 - Command line parameters
 
 The script `rna-ex1.nf` defines the pipeline input parameters. Run it by using the 
 following command: 
@@ -52,7 +52,7 @@ Try to specify a different input parameter, for example:
 nextflow run rna-ex1.nf --genome this/and/that
 ```
 
-### Step 2 
+### Step 2 - Build genome index
 
 The second example adds the `buildIndex` process. It takes the genome file as 
 input and creates the genome index by using the `bowtie-build` tool. 
@@ -81,7 +81,7 @@ In order to avoid to add the option `-with-docker` add the following line in the
 docker.enabled = true
 ```
 
-### Step 3 
+### Step 3 - Collect read files by pairs
 
 This step shows how to match *read* files into pairs, so that can be mapped by using *TopHat*. 
 
@@ -103,7 +103,7 @@ Try it again specifying different read files by using a glob pattern:
 nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq'
 ```
 
-### Step 4 
+### Step 4 - Map sequence reads 
 
 The script `rna-ex4.nf` adds the `mapping` process. Note how it declares three inputs: 
 the genome fasta file, the genome index file produced by the `buildIndex` process and 
@@ -126,7 +126,7 @@ nextflow run rna-ex4.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ```
 
 
-### Step 5 
+### Step 5 - Perform reads quantification 
 
 This step adds the quantification step to the example script. It takes the 
 annotation file and the *bam* files produced by *TopHat* and outputs the transcripts 
@@ -138,7 +138,7 @@ You can run it by using the following command:
 nextflow run rna-ex5.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' 
 ```
 
-### Step 6 
+### Step 6 - Define the pipeline output
 
 This step shows how produce the pipeline output to a folder of your choice by using the 
 `publishDir` directive. 
@@ -169,7 +169,7 @@ nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my
 You will find the transcripts produced by the pipeline in the `my_transcripts` folder.
 
 
-### Step 7
+### Step 8 - Handle completion event
 
 This step shows how to execute an action when the pipeline completes the execution. 
 
@@ -186,8 +186,68 @@ Try to run it by using the following command:
 nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ``` 
  
+### Step 9 - Manage custom scripts
 
-### Step 8 (bonus)  
+Real world pipelines use a lot of custom user scripts (BASH, R, Python, etc). Nextflow 
+allows you to use and manage all these scripts in consistent manner. Simply put them 
+in a directory named `bin` in the pipeline project root. They will be automatically added 
+to the pipeline execution `PATH`. 
+
+For example, create a file named `quantify.sh` with the following content: 
+
+```
+#!/bin/bash 
+set -e 
+set -u
+
+annot=${1}
+bam_file=${2}
+pair_id=${3}
+
+cufflinks --no-update-check -q -G $annot ${bam_file}
+mv transcripts.gtf transcript_${pair_id}.gtf
+```
+
+Save it, grant the execute permission and move it under the `bin` directory as shown below: 
+
+```
+chmod +x quantify.sh
+mkdir -p bin 
+mv quantify.sh bin
+```
+
+Then, open the `rna-ex7.nf` script the `makeTranscript` process with 
+the following one: 
+
+```
+process makeTranscript {
+    tag "$pair_id"
+    publishDir params.outdir, mode: 'copy'  
+       
+    input:
+    file annot from annotation_file 
+    set pair_id, file(bam_file) from bam
+     
+    output:
+    set pair_id, file('transcript_*.gtf') into transcripts
+ 
+    """
+    quantify.sh $annot $bam_file $pair_id
+    """
+}
+
+```
+
+For the sake of simplicity of this example, the *cpus* parameter it's ignored. 
+
+Run it as before: 
+
+```
+nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
+```
+
+
+### Step 10 - Publish to GitHub (bonus)  
 
 Here you will lean how to publish your pipeline on [GitHub](https://github.com) and share 
 it with other people in a easy and consistent manner ie. tracking all the project 
@@ -205,12 +265,23 @@ Copy in that folder the following files:
 ```
 cp $HOME/crg-course-nov16/rna-ex6.nf $HOME/rnaseq-demo/main.nf
 cp $HOME/crg-course-nov16/nextflow.config $HOME/rnaseq-demo/
+cp -r $HOME/crg-course-nov16/bin $HOME/rnaseq-demo/
 cp -r $HOME/crg-course-nov16/data $HOME/rnaseq-demo/
+```
+
+Setup your `git` credentials: 
+
+```
+git config user.name "your name"
+git config user.email your@email.com 
 ```
 
 Create a new project on GitHub to host your pipeline, and follow 
 the instraction provided by it to publish the `$HOME/rnaseq-demo/`
 in that repository. 
+
+Note: make sure to use the same email address you have defined in your 
+`git` configuration defined with the previous commands.   
 
 When done, you will be able to run your pipeline by using the following 
 command: 
@@ -222,14 +293,50 @@ nextflow run <your-github-user-name>/rnaseq-demo
 
 ## Docker hands-on 
 
-Create a Docker image containing Samtools and Bowtie2. 
+Get practice with basic Docker commands to pull, run and build your own containers.
+ 
+A container is a ready-to-run Linux environment which can be executed in an isolated 
+manner from the hosting system. It has own copy of the file system, processes space,
+memory management, etc. 
+ 
+Docker adds to this concept an handy management tool to build, run and share container images. 
 
-Then use it to build a genome index file. 
+These images can be uploaded and published in a centralised repository know as 
+[Docker Hub](https://hub.docker.com), or provided by other parties like for example [Quay](https://quay.io).
 
 
-### Step 1 
+### Step 1 - Run a container 
 
-Create an empty working directory eg. `~/docker-tutorial` and change to it: 
+Run a container is easy as using the following command 
+
+```
+docker run <container-name> 
+```
+
+For example: 
+
+```
+docker run hello-world  
+```
+
+### Step 2 - Pull a container 
+
+```
+docker pull debian:wheezy 
+```
+
+### Step 3 - Run a container in interactive mode 
+
+```
+docker run -it debian:wheezy bash 
+``` 
+
+### Step 4 - Create your own image 
+
+Create a Docker your own Docker image containing Samtools and Bowtie2.
+
+In order to build a Docker image, start creating an empty directory eg. 
+`~/docker-tutorial` and change to it: 
 
 ```
 mkdir ~/docker-tutorial 
@@ -242,13 +349,11 @@ a lot of time when big/many files exist. For this reason it's important to *alwa
 a directory containing only the files you really need to include in your Docker image. 
 Alternatively you can use the `.dockerignore` file to select the path to exclude from the build. 
 
-### Step 2 
-
-Use your favourite editor eg. `vim` to create a file named `Dockerfile` and copy the 
+Then use your favourite editor eg. `vim` to create a file named `Dockerfile` and copy the 
 following content: 
 
 ```
-FROM debian:jessie 
+FROM debian:wheezy 
 
 MAINTAINER <your name>
 
@@ -258,7 +363,7 @@ RUN apt-get update --fix-missing && \
 
 When done save the file. 
 
-### Step 4 
+### Step 5 - Build the image  
 
 Build the Docker image by using the following command: 
 
@@ -273,7 +378,7 @@ has been created listing all available images:
 docker images
 ```
 
-### Step 5 
+### Step 6 - Add a software package to the  
 
 Add the Bowtie package to the Docker image by adding to the `Dockerfile` the following snippet: 
 
@@ -295,7 +400,7 @@ docker build -t my-image .
 You will notice that it creates a new Docker image with the same name *but* with a 
 different image ID. 
 
-### Step 6 
+### Step 7 - Run Bowtie in the container 
 
 Check that everything is fine running Bowtie in the container as shown below: 
 
@@ -314,7 +419,7 @@ commands to navigate in the file system.
 
 To exit from the container, stop the BASH session with the `exit` command.
 
-### Step 7
+### Step 8 - File system mounts
 
 Create an genome index file by running bowtie in the container. 
 
@@ -342,7 +447,7 @@ this allows you to use the same path when running it in the container eg.
 docker run --volume $HOME:$HOME --workdir $PWD my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
 ```
 
-### Step 8 (bonus)
+### Step 9 - Upload the container in the Docker Hub (bonus)
 
 Publish your container in the Docker Hub to share it with other people. 
 
