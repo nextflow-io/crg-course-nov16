@@ -83,7 +83,7 @@ docker.enabled = true
 
 ### Step 3 - Collect read files by pairs
 
-This step shows how to match *read* files into pairs, so that can be mapped by using *TopHat*. 
+This step shows how to match *read* files into pairs, so thay can be mapped by *TopHat*. 
 
 Edit the script `rna-ex3.nf` and add the following statement as the last line: 
 
@@ -103,11 +103,15 @@ Try it again specifying different read files by using a glob pattern:
 nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq'
 ```
 
+It shows how read files matching the pattern specified are grouped in pairs having 
+the same prefix.
+
+
 ### Step 4 - Map sequence reads 
 
 The script `rna-ex4.nf` adds the `mapping` process. Note how it declares three inputs: 
 the genome fasta file, the genome index file produced by the `buildIndex` process and 
-the read pairs. Also note as the last input is defined as a `set` ie. composed by 
+the read pairs. Also note as the last input is defined as a `set` ie. it's composed by 
 different elements: the pair ID, the first read file and the second read file. 
 
 Execute it by using the following command: 
@@ -174,7 +178,7 @@ You will find the transcripts produced by the pipeline in the `my_transcripts` f
 This step shows how to execute an action when the pipeline completes the execution. 
 
 Note that Nextflow processes define the execution of *asynchronous* tasks i.e. they are not 
-executed one after another as they are written in the pipeline as it would happen in a 
+executed one after another as they are written in the pipeline script as it would happen in a 
 common *iperative* programming language.
 
 The script uses the `workflow.onComplete` event handler to print a confirmation message 
@@ -216,8 +220,8 @@ mkdir -p bin
 mv quantify.sh bin
 ```
 
-Then, open the `rna-ex7.nf` script the `makeTranscript` process with 
-the following one: 
+Then, open the `rna-ex7.nf` file and replace the `makeTranscript` process with 
+the following code: 
 
 ```
 process makeTranscript {
@@ -250,8 +254,8 @@ nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ### Step 9 - Publish to GitHub (bonus)  
 
 Here you will lean how to publish your pipeline on [GitHub](https://github.com) and share 
-it with other people in a easy and consistent manner ie. tracking all the project 
-dependencies. 
+it with other people and allowing you to track all the project 
+dependencies and changes with ease. 
  
 Create a new empty project folder eg. 
 
@@ -260,7 +264,7 @@ mkdir $HOME/rnaseq-demo
 cd $HOME/rnaseq-demo
 ``` 
 
-Copy in that folder the following files: 
+Copy in this folder the following files: 
 
 ```
 cp $HOME/crg-course-nov16/rna-ex6.nf $HOME/rnaseq-demo/main.nf
@@ -277,17 +281,38 @@ git config user.email your@email.com
 ```
 
 Create a new project on GitHub to host your pipeline, and follow 
-the instraction provided by it to publish the `$HOME/rnaseq-demo/`
-in that repository. 
+the instruction provided by it to publish the project in the project in 
+the folder `$HOME/rnaseq-demo/` in that repository. 
 
 Note: make sure to use the same email address you have defined in your 
-`git` configuration defined with the previous commands.   
+`git` configuration setup with the previous commands.   
 
 When done, you will be able to run your pipeline by using the following 
 command: 
 
 ```
 nextflow run <your-github-user-name>/rnaseq-demo
+```
+
+
+### Manage revisions (bonus)
+
+Git and GitHub are tools specifically designed to track project changes and versions. 
+You can use Git tags, branches or commit IDs to maintain an history revision of your 
+pipeline projects.
+
+Nextflow integrates these tools making possible to run any revision of your pipeline 
+by simply specifying it on the run command line by using the `-revision` option, as shown 
+below: 
+
+```
+nextflow run <project name> -r <revision name>
+```
+
+The list of available revision can be list by using the following command: 
+
+```
+nextflow info <project-name>
 ```
 
 
@@ -305,12 +330,12 @@ introduced with kernel 2.6.
 Docker adds to this concept an handy management tool to build, run and share container images. 
 
 These images can be uploaded and published in a centralised repository know as 
-[Docker Hub](https://hub.docker.com), or provided by other parties like for example [Quay](https://quay.io).
+[Docker Hub](https://hub.docker.com), or hosted by other parties like for example [Quay](https://quay.io).
 
 
 ### Step 1 - Run a container 
 
-Run a container is easy as using the following command 
+Run a container is easy as using the following command: 
 
 ```
 docker run <container-name> 
@@ -324,19 +349,36 @@ docker run hello-world
 
 ### Step 2 - Pull a container 
 
+The pull command allows you to download a Docker image without running it. For example: 
+
 ```
 docker pull debian:wheezy 
 ```
 
+The above command download a Debian Linux image.
+
+
 ### Step 3 - Run a container in interactive mode 
+
+Launching a BASH shell in the container allows you to operate in an interactive mode 
+in the containerised operating system. For example: 
 
 ```
 docker run -it debian:wheezy bash 
 ``` 
 
-### Step 4 - Create your own image 
+Once launched the container you wil noticed that's running as root (!). 
+Use the usual commands to navigate in the file system.
 
-Create a Docker your own Docker image containing Samtools and Bowtie2.
+To exit from the container, stop the BASH session with the exit command.
+
+### Step 4 - Your first Dockerfile
+
+Docker images are created by using a so called `Dockerfile` i.e. a simple text file 
+containing a list of commands to be executed to assemble and configure the image
+with the software packages required.    
+
+In this step you will create a Docker image containing the Samtools and Bowtie2 tools.
 
 In order to build a Docker image, start creating an empty directory eg. 
 `~/docker-tutorial` and change to it: 
@@ -366,6 +408,7 @@ RUN apt-get update --fix-missing && \
 
 When done save the file. 
 
+
 ### Step 5 - Build the image  
 
 Build the Docker image by using the following command: 
@@ -374,14 +417,14 @@ Build the Docker image by using the following command:
 docker build -t my-image .
 ```
 
-Note, don't miss the dot in the above command. When it completes, verify that the image 
+Note: don't miss the dot in the above command. When it completes, verify that the image 
 has been created listing all available images: 
 
 ```
 docker images
 ```
 
-### Step 6 - Add a software package to the  
+### Step 6 - Add a software package to the image
 
 Add the Bowtie package to the Docker image by adding to the `Dockerfile` the following snippet: 
 
@@ -417,19 +460,16 @@ You can even launch a container in an interactive mode by using the following co
 docker run -it my-image bash
 ```
 
-Once launched the container you wil noticed that's running as `root` (!). Use the usual 
-commands to navigate in the file system. 
-
-To exit from the container, stop the BASH session with the `exit` command.
 
 ### Step 8 - File system mounts
 
-Create an genome index file by running bowtie in the container. 
+Create an genome index file by running Bowtie in the container. 
 
 Try to run Bowtie in the container with the following command: 
 
 ```
-docker run my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
+docker run my-image \
+  bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
 ```
 
 The above command fails because Bowtie cannot access the input file.
@@ -440,14 +480,16 @@ it cannot access the hosting file system by default.
 You will need to use the `--volume` command line option to mount the input file(s) eg. 
 
 ```
-docker run --volume ~/crg-course-nov16/data/ggal/genome.fa:/genome.fa my-image bowtie2-build /genome.fa genome.index
+docker run --volume ~/crg-course-nov16/data/ggal/genome.fa:/genome.fa my-image \
+  bowtie2-build /genome.fa genome.index
 ```
 
-An easier way is to mount the parent directory to an identical one in the container, 
+An easier way is to mount a parent directory to an identical one in the container, 
 this allows you to use the same path when running it in the container eg. 
 
 ```
-docker run --volume $HOME:$HOME --workdir $PWD my-image bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
+docker run --volume $HOME:$HOME --workdir $PWD my-image \
+  bowtie2-build ~/crg-course-nov16/data/ggal/genome.fa genome.index
 ```
 
 ### Step 9 - Upload the container in the Docker Hub (bonus)
@@ -461,7 +503,7 @@ the following command, entering the user name and password you specified registe
 docker login 
 ``` 
 
-Tag the image with your Docker username account: 
+Tag the image with your Docker user name account: 
 
 ```
 docker tag my-image <user-name>/my-image 
@@ -516,6 +558,7 @@ nextflow run rnatoy
 ```
 
 When completed you will find the pipeline output in the `results` folder.
+
 
 ### Run the pipeline against a real dataset 
 
