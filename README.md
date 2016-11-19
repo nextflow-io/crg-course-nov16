@@ -169,7 +169,7 @@ nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my
 You will find the transcripts produced by the pipeline in the `my_transcripts` folder.
 
 
-### Step 8 - Handle completion event
+### Step 7 - Handle completion event
 
 This step shows how to execute an action when the pipeline completes the execution. 
 
@@ -186,7 +186,7 @@ Try to run it by using the following command:
 nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ``` 
  
-### Step 9 - Manage custom scripts
+### Step 8 - Manage custom scripts
 
 Real world pipelines use a lot of custom user scripts (BASH, R, Python, etc). Nextflow 
 allows you to use and manage all these scripts in consistent manner. Simply put them 
@@ -247,7 +247,7 @@ nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
 ```
 
 
-### Step 10 - Publish to GitHub (bonus)  
+### Step 9 - Publish to GitHub (bonus)  
 
 Here you will lean how to publish your pipeline on [GitHub](https://github.com) and share 
 it with other people in a easy and consistent manner ie. tracking all the project 
@@ -299,6 +299,9 @@ A container is a ready-to-run Linux environment which can be executed in an isol
 manner from the hosting system. It has own copy of the file system, processes space,
 memory management, etc. 
  
+Containers are a Linux feature known as *Control Groups* or [Ccgroups](https://en.wikipedia.org/wiki/Cgroups)
+introduced with kernel 2.6. 
+
 Docker adds to this concept an handy management tool to build, run and share container images. 
 
 These images can be uploaded and published in a centralised repository know as 
@@ -514,6 +517,47 @@ nextflow run rnatoy
 
 When completed you will find the pipeline output in the `results` folder.
 
+### Run the pipeline against a real dataset 
+
+Create a new folder to run the pipeline against the mouse genome dataset eg: 
+
+```
+mkdir -p $HOME/mouse-run
+cd $HOME/mouse-run
+```
+
+Then create the `nextflow.config` file with the following content: 
+
+```
+params.reads = "/software/rg/rnaseq/data/*_{1,2}.fastq.gz"
+params.annot = "/software/rg/rnaseq/refs/mm65.long.ok.sorted.gtf"
+params.genome = '/users/cn/ptommaso/nf-course/projects/mouse_genome_mm9_chr1.fa'
+
+process.executor = 'crg' 
+process.queue = 'short-sl7'
+process.scratch = true
+process.time = '1h'
+process.memory = '8G'
+process.cpus = 4 
+process.$buildIndex.cpus = 8 
+
+docker.enabled = true
+```
+
+When done, launch the execution by using this command: 
+
+```
+nextflow run rnatoy -bg > log
+```
+
+The `-bg` will launch NF in the background, to check the execution status you can 
+follow the `log` as shown below: 
+
+```
+tail -f log
+```
+ 
+
 ### Automatic errors fail over 
 
 When running large scale pipelines launching thousands of jobs on many 
@@ -546,7 +590,6 @@ By using the above settings pipeline a task will initially request one GB of mem
 In case of an error it will be rescheduled requesting 2 GB and so on, until it is executed 
 successfully or the limit of times a task can be retried is reached, forcing the termination 
 of the pipeline.
-
 
 
 ## Deploy a NF pipeline in the AWS cloud (bonus)
