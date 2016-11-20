@@ -30,13 +30,13 @@ process buildIndex {
     tag "$genome_file.baseName"
     
     input:
-    file genome_file
+    file genome from genome_file
      
     output:
     file 'genome.index*' into genome_index
        
     """
-    bowtie2-build --threads ${task.cpus} ${genome_file} genome.index
+    bowtie2-build --threads ${task.cpus} ${genome} genome.index
     """
 }
 

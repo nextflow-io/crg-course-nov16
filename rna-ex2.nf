@@ -28,12 +28,12 @@ annotation_file = file(params.annot)
 process buildIndex {
     
     input:
-    file genome_file
+    file genome from genome_file
      
     output:
     file 'genome.index*' into genome_index
        
     """
-    bowtie2-build --threads ${task.cpus} ${genome_file} genome.index
+    bowtie2-build --threads ${task.cpus} ${genome} genome.index
     """
 }
