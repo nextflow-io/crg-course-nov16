@@ -276,8 +276,8 @@ cp -r $HOME/crg-course-nov16/data $HOME/rnaseq-demo/
 Setup your `git` credentials: 
 
 ```
-git config user.name "your name"
-git config user.email your@email.com 
+git config --config user.name "your name"
+git config --config user.email your@email.com 
 ```
 
 Create a new project on GitHub to host your pipeline, and follow 
