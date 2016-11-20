@@ -589,6 +589,7 @@ process.cpus = 4
 process.$buildIndex.cpus = 8 
 
 docker.enabled = true
+trace.enabled = true
 ```
 
 When done, launch the execution by using this command: 
@@ -654,7 +655,7 @@ execution in the AWS cloud in a few commands:
 ## Assignment 
 
 Create a two steps pipeline that given any number of protein sequence FASTA files creates 
-a phylogenetic tree for each or them. Bonus: use a Docker to isolate and deploy 
+a phylogenetic tree for each or them. Bonus: use a Docker container to isolate and deploy 
 the binary dependencies.  
 
 #### Tip 
@@ -671,7 +672,7 @@ Example command line:
 
 Use the input protein sequence FASTA files in the following folder: 
 
-    $HOME/crg-course-nov16/
+    $HOME/crg-course-nov16/data/prot
     
     
 [The code will be published after the of the course]    
