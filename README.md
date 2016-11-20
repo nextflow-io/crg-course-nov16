@@ -264,15 +264,6 @@ mkdir $HOME/rnaseq-demo
 cd $HOME/rnaseq-demo
 ``` 
 
-Copy in this folder the following files: 
-
-```
-cp $HOME/crg-course-nov16/rna-ex6.nf $HOME/rnaseq-demo/main.nf
-cp $HOME/crg-course-nov16/nextflow.config $HOME/rnaseq-demo/
-cp -r $HOME/crg-course-nov16/bin $HOME/rnaseq-demo/
-cp -r $HOME/crg-course-nov16/data $HOME/rnaseq-demo/
-```
-
 Setup your `git` credentials: 
 
 ```
@@ -285,7 +276,20 @@ the instruction provided by it to publish the project in the project in
 the folder `$HOME/rnaseq-demo/` in that repository. 
 
 Note: make sure to use the same email address you have defined in your 
-`git` configuration setup with the previous commands.   
+`git` configuration setup with the previous commands.  
+
+Finally, copy the pipeline files and data and upload to the GitHub repository 
+
+```
+cp $HOME/crg-course-nov16/rna-ex6.nf $HOME/rnaseq-demo/main.nf
+cp $HOME/crg-course-nov16/nextflow.config $HOME/rnaseq-demo/
+cp -r $HOME/crg-course-nov16/bin $HOME/rnaseq-demo/
+cp -r $HOME/crg-course-nov16/data $HOME/rnaseq-demo/
+
+git add bin/ data/ main.nf nextflow.config 
+git commit -m 'Added pipeline files'
+git push 
+```
 
 When done, you will be able to run your pipeline by using the following 
 command: 
@@ -429,7 +433,7 @@ docker images
 Add the Bowtie package to the Docker image by adding to the `Dockerfile` the following snippet: 
 
 ```
-RUN wget -q -O bowtie.zip https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.7/bowtie2-2.2.7-linux-x86_64.zip/download && \
+RUN wget --no-check-certificate -O bowtie.zip https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.7/bowtie2-2.2.7-linux-x86_64.zip/download && \
   unzip bowtie.zip -d /opt/ && \
   ln -s /opt/bowtie2-2.2.7/ /opt/bowtie && \
   rm bowtie.zip 
