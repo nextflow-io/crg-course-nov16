@@ -578,7 +578,7 @@ Then create the `nextflow.config` file with the following content:
 ```
 params.reads = "/software/rg/rnaseq/data/*_{1,2}.fastq.gz"
 params.annot = "/software/rg/rnaseq/refs/mm65.long.ok.sorted.gtf"
-params.genome = '/users/cn/ptommaso/nf-course/projects/mouse_genome_mm9_chr1.fa'
+params.genome = "/users/cn/ptommaso/projects/nf-course/mouse_genome_mm9_chr1.fa" 
 
 process.executor = 'crg' 
 process.queue = 'short-sl7'
