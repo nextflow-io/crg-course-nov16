@@ -44,7 +44,7 @@ Jose has informed her that their paper, so desperately needed to complete her Ph
 
 Finish these tasks and the PhD is finally hers... 
 
-Seven days later and Marta trudges into her weekly meeting the PI. Depressed, she has been stuck for three days trying to install the software. It is incompatible with the new operating system installed on the cluster and she cannot find an old piece of softwar. In that moment, Jose remembers the brilliant summer student who had taken over Mario's analysis. He was very lazy, he hated submitting jobs to the cluster manually and wanted to automate as much as possible.
+Seven days later and Marta trudges into her weekly meeting with her PI. Depressed, she has been stuck for three days trying to install the software. It is incompatible with the new operating system installed on the cluster and she cannot find an old piece of software. In that moment, Jose remembers the brilliant summer student who had taken over the analysis. He was very lazy, he hated submitting jobs to the cluster manually and wanted to automate as much as possible.
 
 Jose explained that in his final presentation, the summer student had told them about Nextflow and Docker. He forwards the presentation to Marta in a last ditch attempt to save her PhD. Later that evening and after only two beers at the beer session, the not-so tipsy Marta sits on her sofa and opens the presentation. To her surprise, the presentation contains step-by-step instructions for anyone with a Mac or Linux. She follows along on her laptop:
 
