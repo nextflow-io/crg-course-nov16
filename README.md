@@ -257,19 +257,20 @@ Here you will lean how to publish your pipeline on [GitHub](https://github.com) 
 it with other people and allowing you to track all the project 
 dependencies and changes with ease. 
  
-Create a new empty project folder eg. 
-
-```
-mkdir $HOME/rnaseq-demo
-cd $HOME/rnaseq-demo
-``` 
-
 Setup your `git` credentials: 
 
 ```
 git config --config user.name "your name"
 git config --config user.email your@email.com 
 ```
+
+Create a new empty project folder that will contain the files you 
+want to upload to GitHub eg. 
+
+```
+mkdir $HOME/rnaseq-demo
+cd $HOME/rnaseq-demo
+``` 
 
 Create a new project on GitHub to host your pipeline, and follow 
 the instruction provided by it to publish the project in the project in 
