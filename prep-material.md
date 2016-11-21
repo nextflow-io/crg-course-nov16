@@ -11,21 +11,21 @@ Time: 20-25 min
 
 ### What is Nextflow?
 
-Nextflow is a *workflow manager*. It has been developed specifically to ease the creation and execution of bioinformatics pipelines.  The benefits of having you pipeline in Nextflow include 
-* Built in GitHub support
-* Automated cluster execution
-* Docker support to eliminate the need for dependencies
+Nextflow is a *workflow manager*. It has been developed specifically to ease the creation and execution of bioinformatics pipelines.  The benefits of having you pipeline in Nextflow include: 
+* Built in GitHub support.
+* Automated cluster execution.
+* Docker support to eliminate the need for dependencies.
 * Portability so you can run your pipeline anywhere laptop, cluster or cloud.
 
-Whether your pipeline is a simple BLAST execution or a complex genome annotation pipleline, you can build it with Nextflow. 
+Whether your pipeline is a simple BLAST execution or a complex genome annotation pipeline, you can build it with Nextflow. 
 
 
 ### What is Docker?
 
-Docker is a platform to package and run applications in isolated environments called containers. In the scientific context, Docker and container technology in general enable us to:
-* Simplify the setup of complicated software, libraries and modules
-* Make our results, analysis and graphs 100% reproducible
-* Share our work with the world
+Docker is a tool to package and run applications in isolated environments called containers. In the scientific context, Docker and container technology in general enable us to:
+* Simplify the setup of complicated software, libraries and modules.
+* Make our results, analysis and graphs 100% reproducible.
+* Share our work with the world.
 
 
 ### Why use Nextflow and Docker?
@@ -46,7 +46,7 @@ Finish these tasks and the PhD is finally hers...
 
 Seven days later and Marta trudges into her weekly meeting the PI. Depressed, she has been stuck for three days trying to install the software. It is incompatible with the new operating system installed on the cluster and she cannot find an old piece of softwar. In that moment, Jose remembers the brilliant summer student who had taken over Mario's analysis. He was very lazy, he hated submitting jobs to the cluster manually and wanted to automate as much as possible.
 
-Jose explained that in his final presentation, the summer student had told them about Nextflow and Docker.  He forwards the presentation to Marta in a last ditch attempt to save her PhD. Later that evening and after only two beers at the beer session, the not-so tipsy Marta sits on her sofa and opens the presentation. To her surprise, the presentation contains step-by-step instructions for anyone with a Mac or Linux. She follows along on her laptop:
+Jose explained that in his final presentation, the summer student had told them about Nextflow and Docker. He forwards the presentation to Marta in a last ditch attempt to save her PhD. Later that evening and after only two beers at the beer session, the not-so tipsy Marta sits on her sofa and opens the presentation. To her surprise, the presentation contains step-by-step instructions for anyone with a Mac or Linux. She follows along on her laptop:
 
 * Install [Docker](https://www.docker.com/)
 
@@ -93,9 +93,9 @@ Both process and channels are defined in the `.nf` script which forms the heart 
 
 ## What about Docker?
 
-In Nextflow, each task is sandboxed, effectively executed in an isolated way. By using docker, each task can be run within its own container instance. Think of it as if every task is executed in its own operating system. The docker container can be defined the in the nextflow config file (`nextflow.config`). 
+In Nextflow, each task is sandboxed, effectively executed in an isolated way. By using Docker, each task can be run within its own container instance. Think of it as if every task is executed in its own operating system. The docker container can be defined the in the nextflow config file (`nextflow.config`). 
 
-Consider the kallisto-nf example [here](https://github.com/cbcrg/kallisto-nf/blob/master/nextflow.config#L10). This tells Nextflow to use this docker container for the execution of each process.
+Consider the kallisto-nf example [here](https://github.com/cbcrg/kallisto-nf/blob/master/nextflow.config#L10). This tells Nextflow to use this Docker container for the execution of each process.
 
 
 ## Summary
