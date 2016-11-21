@@ -582,7 +582,7 @@ params.annot = "/software/rg/rnaseq/refs/mm65.long.ok.sorted.gtf"
 params.genome = "/users/cn/ptommaso/projects/nf-course/mouse_genome_mm9_chr1.fa" 
 
 process.executor = 'crg' 
-process.queue = 'short-sl7'
+process.queue = 'course'
 process.scratch = true
 process.time = '1h'
 process.memory = '8G'
