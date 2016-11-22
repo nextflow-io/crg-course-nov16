@@ -17,7 +17,7 @@ curl -fsSL get.nextflow.io | bash
 ```
     
 The above snippet creates the `nextflow` launcher in the current directory. 
-Complete the installation moving it in a directory on your `PATH` eg: 
+Complete the installation moving it into a directory on your `PATH` eg: 
 
 ```
 mv nextflow $HOME/bin
@@ -33,9 +33,9 @@ git clone https://github.com/nextflow-io/crg-course-nov16.git && cd crg-course-n
 
 During this tutorial you will implement a proof of concept of a RNA-Seq pipeline which: 
 
-1. Index a genome file.
-2. Map read pairs against the genome.
-3. Perform quantification.
+1. Indexes a genome file.
+2. Maps read pairs against the genome.
+3. Performs quantification.
 
 ### Step 1 - Command line parameters
 
@@ -676,5 +676,5 @@ Use the input protein sequence FASTA files in the following folder:
     $HOME/crg-course-nov16/data/prot
     
     
-[The code will be published after the of the course]    
+[The code will be published after the end of the course]    
 
