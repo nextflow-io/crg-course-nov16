@@ -676,5 +676,5 @@ Use the input protein sequence FASTA files in the following folder:
     $HOME/crg-course-nov16/data/prot
     
     
-[The code will be published after the end of the course]    
+Possible implementation: https://github.com/nextflow-io/phytoy-nf    
 
