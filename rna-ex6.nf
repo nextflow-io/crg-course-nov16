@@ -51,7 +51,7 @@ process mapping {
      
     input:
     file 'genome.index.fa' from genome_file 
-    file genome_index from genome_index.first()
+    file genome_index from genome_index
     set pair_id, file(read1), file(read2) from read_pairs
  
     output:
