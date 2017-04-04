@@ -389,8 +389,7 @@ In order to build a Docker image, start creating an empty directory eg.
 `~/docker-tutorial` and change to it: 
 
 ```
-mkdir ~/docker-tutorial 
-cd ~/docker-tutorial 
+mkdir -p ~/docker-tutorial && cd ~/docker-tutorial 
 ```
 
 Warning: the Docker build process automatically copies all files that are located in the 
