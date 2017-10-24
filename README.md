@@ -1,12 +1,13 @@
-# Nextflow + Docker tutorial 
+# Nextflow + Singularity tutorial 
 
 This repository contains the tutorial material for the *Parallel distributed computational workflows
-with Nextflow and Docker containers* course. 
+with Nextflow and Singularity containers* course. 
 
 ## Prerequisite
 
 * Java 7 or 8 
-* Docker engine 1.10.x (or higher) 
+* Docker engine 1.10.x (or higher) or
+* Singularity 
 
 ## Installation 
 
@@ -26,7 +27,7 @@ mv nextflow $HOME/bin
 Finally, clone this repository with the following command: 
 
 ```
-git clone https://github.com/nextflow-io/crg-course-nov16.git && cd crg-course-nov16
+git clone https://github.com/nextflow-io/crg-course-nov16.git -b singularity && cd crg-course-nov16
 ```
 
 ## Nextflow hands-on 
@@ -65,17 +66,17 @@ nextflow run rna-ex2.nf
 
 The execution will fail because Bowtie is not installed in the test environment. 
 
-Add the command line option `-with-docker` to launch the execution through a Docker container
+Add the command line option `-with-singularity` to launch the execution through a Singularity container
 as shown below: 
 
 ```
-nextflow run rna-ex2.nf -with-docker
+nextflow run rna-ex2.nf -with-singularity -profile crg
 ```
 
-This time it works because it uses the Docker container `nextflow/rnatoy:1.3` defined in the 
+This time it works because it uses the Singularity container `cbcrg/rnatoy:1.4` defined in the 
 `nextflow.config` file. 
 
-In order to avoid to add the option `-with-docker` add the following line in the `nextflow.config` file: 
+In order to avoid to add the option `-with-singularity` add the following line in the `nextflow.config` file: 
 
 ```
 docker.enabled = true
@@ -100,7 +101,7 @@ nextflow run rna-ex3.nf
 Try it again specifying different read files by using a glob pattern:
 
 ```
-nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq'
+nextflow run rna-ex3.nf --reads 'data/ggal/reads/*_{1,2}.fq' -profile crg
 ```
 
 It shows how read files matching the pattern specified are grouped in pairs having 
@@ -117,7 +118,7 @@ different elements: the pair ID, the first read file and the second read file.
 Execute it by using the following command: 
 
 ```
-nextflow run rna-ex4.nf -resume
+nextflow run rna-ex4.nf -resume -profile crg
 ```
 
 The `-resume` option skips the execution of any step that has been processed in a previous 
@@ -126,7 +127,7 @@ execution.
 Try to execute it with more read files as shown below: 
 
 ```
-nextflow run rna-ex4.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
+nextflow run rna-ex4.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' -profile crg
 ```
 
 
@@ -139,7 +140,7 @@ annotation file and the *bam* files produced by *TopHat* and outputs the transcr
 You can run it by using the following command: 
 
 ```
-nextflow run rna-ex5.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' 
+nextflow run rna-ex5.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' -profile crg
 ```
 
 ### Step 6 - Define the pipeline output
@@ -150,7 +151,7 @@ This step shows how produce the pipeline output to a folder of your choice by us
 Run the example by using the following command: 
 
 ```
-nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' 
+nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' -profile crg
 ```
 
 Then you will find the quantification files in the folder `results`. 
@@ -167,7 +168,7 @@ replace the `'results'` string with the `params.outdir` parameter.
 Finally run it again with the following command: 
 
 ```
-nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my_transcripts
+nextflow run rna-ex6.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' --outdir my_transcripts -profile crg
 ```
 
 You will find the transcripts produced by the pipeline in the `my_transcripts` folder.
@@ -187,7 +188,7 @@ when the script completes.
 Try to run it by using the following command: 
 
 ```
-nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
+nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' -profile crg
 ``` 
  
 ### Step 8 - Manage custom scripts
@@ -247,7 +248,7 @@ For the sake of simplicity of this example, the *cpus* parameter it's ignored.
 Run it as before: 
 
 ```
-nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq'
+nextflow run rna-ex7.nf -resume --reads 'data/ggal/reads/*_{1,2}.fq' -profile crg
 ```
 
 
@@ -296,7 +297,7 @@ When done, you will be able to run your pipeline by using the following
 command: 
 
 ```
-nextflow run <your-github-user-name>/rnaseq-demo
+nextflow run <your-github-user-name>/rnaseq-demo -profile crg
 ```
 
 
